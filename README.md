@@ -1,6 +1,6 @@
 # Objectifs
 
-Le but de ce proje des de réaliser un RPG en ligne de commande en utilisant des language orienté objet.
+Le but de ce projet est de réaliser un RPG en ligne de commande en utilisant des language orienté objet.
 * Dresser un diagramme de classes
 * Mettre en place une application en ligne de commande
 * Développement avec TypeScript
