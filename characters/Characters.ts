@@ -8,23 +8,23 @@ export class Character {
     maxHp : number;
     currentHp : number;
 
-     constructor(stats: {
-    name: string;
-    attackP: number;
-    deffP: number;
-    attackM: number;
-    deffM: number;
-    speed: number;
-    maxHp: number;
-  }) {
-    this.name = stats.name;
-    this.attackP = stats.attackP;
-    this.deffP = stats.deffP;
-    this.attackM = stats.attackM;
-    this.deffM = stats.deffM;
-    this.speed = stats.speed;
-    this.maxHp = stats.maxHp;
-    this.currentHp = stats.maxHp;
+     constructor(
+    name: string,
+    attackP: number,
+    deffP: number,
+    attackM: number,
+    deffM: number,
+    speed: number,
+    maxHp: number,
+  ) {
+    this.name = name;
+    this.attackP = attackP;
+    this.deffP = deffP;
+    this.attackM = attackM;
+    this.deffM = deffM;
+    this.speed = speed;
+    this.maxHp = maxHp;
+    this.currentHp = maxHp;
   }
   /** Vérifie si le personnage est vivant */
   isAlive(): boolean {
