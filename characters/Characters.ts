@@ -27,12 +27,12 @@ export class Character {
     this.currentHp = maxHp;
   }
   /** Vérifie si le personnage est vivant */
-  isAlive(): boolean {
+  isAlive() : boolean {
     return this.currentHp > 0;
   }
 
   /** Attaque physique */
-  attackPhysical(target: Character): number {
+  attackPhysical(target : Character) : number {
     const rawDamage = this.attackP - target.deffP;
     const damage = Math.max(rawDamage, 0);
 
@@ -41,7 +41,7 @@ export class Character {
   }
 
   /** Attaque magique */
-  attackMagical(target: Character): number {
+  attackMagical(target : Character) : number {
     const rawDamage = this.attackM - target.deffM;
     const damage = Math.max(rawDamage, 0);
 
@@ -49,7 +49,7 @@ export class Character {
     return damage;
   }
   /** Soigne un pourcentage de la vie max */
-  heal(percent: number): number {
+  heal(percent : number) : number {
     if (!this.isAlive()) return 0;
 
     const healAmount = Math.floor(this.maxHp * percent);
@@ -60,7 +60,7 @@ export class Character {
   }
 
   /** Ressuscite avec un pourcentage de la vie max */
-  resurrect(percent: number): boolean {
+  resurrect(percent : number) : boolean {
     if (this.isAlive()) return false;
 
     this.currentHp = Math.max(Math.floor(this.maxHp * percent), 1);
