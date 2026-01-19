@@ -9,3 +9,6 @@ Le but de ce projet est de réaliser un RPG en ligne de commande en utilisant de
 * Utilisation des concepts OO intermédiaires (écrasement de méthodes, interfaces, classes abstraites...)
 
 # Debut du projet
+
+* Reflexion sur le theme et les classe du jeu.
+* -> Le joueur entre dans un donjon Mythologique et devra afronter des personalitées des Mythologies, Nordique, Grec et Egyptienes.
