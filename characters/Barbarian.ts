@@ -1,8 +1,7 @@
-import { Character } from "./Characters.ts";
+import { Character } from "../src/Characters.ts";
 
 export class Barbarian extends Character {
-    berserkA : number = 1.3;
-
+   
     constructor(
   ) {
         super("Bogdan", 120, 80, 0, 80, 90, 120)
