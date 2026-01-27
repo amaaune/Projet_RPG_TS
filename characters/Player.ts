@@ -3,6 +3,7 @@ import { Character } from "../src/Characters.ts";
 
 export class player extends Character {
     
+    inventoru : string[];
 
   /** Attaque physique */
   attackPhysical(target : Character) : number {
@@ -21,15 +22,9 @@ export class player extends Character {
     target.currentHp = Math.max(target.currentHp - damage, 0);
     return damage;
   }
-  /** Soigne un pourcentage de la vie max */
-  heal(percent : number) : number {
-    if (!this.isAlive()) return 0;
 
-    const healAmount = Math.floor(this.maxHp * percent);
-    const before = this.currentHp;
+  useItem() {
 
-    this.currentHp = Math.min(this.currentHp + healAmount, this.maxHp);
-    return this.currentHp - before;
   }
 
   /** Ressuscite avec un pourcentage de la vie max */
@@ -38,5 +33,9 @@ export class player extends Character {
 
     this.currentHp = Math.max(Math.floor(this.maxHp * percent), 1);
     return true;
+  }
+
+  getInventory() {
+    // check si item existe, slotitems 
   }
 }
