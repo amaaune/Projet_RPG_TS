@@ -8,6 +8,8 @@ export class Barbarian extends Character {
       name,
       28,  // attackP
       10,  // defenseP
+      0,  // 
+      10,
       11,  // speed
       110  // maxHp
     );
