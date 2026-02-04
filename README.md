@@ -12,3 +12,7 @@ Le but de ce projet est de réaliser un RPG en ligne de commande en utilisant de
 
 * Reflexion sur le theme et les classe du jeu.
 * -> Le joueur entre dans un donjon Mythologique et devra afronter des personalitées des Mythologies, Nordique, Grec et Egyptienes.
+
+# Execution du projet 
+
+Le lancement affiche une image donc pour devez avoir downloard au prealable les ressources pour le npm-image et ensuite xecuter la commande : deno run --allow-read --allow-net --allow-env main.ts
