@@ -1,46 +1,27 @@
-import { Player } from "./Player.ts";
 import { Character } from "../src/Characters.ts";
-// import { InputHandler } from "../src/InputHandler.ts";
 
-export class Paladin extends Player {
+export class Paladin extends Character {
   role: string = "tank/support hybride";
   
   constructor(name: string) {
     super(
       name,
-      18,  // attackP
-      22,  // defenseP
-      12,  // attackM
-      10,  // defenseM
-      9,   // speed
+      "Paladin",
+      22,  // attack - attaque moins élevée que le guerrier
+      24,  // defense - défense légèrement plus élevée
+      10,  // speed
       120  // maxHp
     );
   }
 
-  async takeTurn(
-    allCharacters: Character[],
-    allies: Character[],
-    enemies: Character[]
-  ): Promise<{ attacker: Character; action: string; target?: Character; damage?: number }> {
-    // Le paladin attaque l'ennemi
-    const target = enemies[0];
-    if (target) {
-      const damage = this.attackPhysical(target);
-      console.log(
-        `⚔️ ${this.name} attaque avec fierté ${target.name} pour ${damage} dégâts!`
-      );
-      return { attacker: this, action: `a attaqué ${target.name}`, target, damage };
-    }
-    return { attacker: this, action: "attend" };
-  }
-
-  /** Paladin attaque *0.4 (40%) */
+  /** Attaque sainte : (attaque - défense adverse) * 0.4 sur tous les ennemis */
   holyAttack(targets: Character[]): number {
     let totalDamage = 0;
 
     for (const target of targets) {
-      const damage = Math.max((this.attackP - target.defenseP) * 0.4, 0);
-      target.takeDamage(damage);
+      const baseDamage = Math.max(this.attack - target.defense, 0);
+      const damage = Math.floor(baseDamage * 0.4);
+      target.currentHp = Math.max(target.currentHp - damage, 0);
       totalDamage += damage;
     }
 

@@ -1,9 +1,8 @@
 export class Character {
   name: string;
-  attackM: number;
-  defenseM: number;
-  attackP: number;
-  defenseP: number;
+  classe: string;
+  attack: number;
+  defense: number;
   speed: number;
   maxHp: number;
   currentHp: number;
@@ -12,19 +11,17 @@ export class Character {
 
   constructor(
     name: string,
-    attackM: number,
-    defenseM: number,
-    attackP: number,
-    defenseP: number,
+    classe: string,
+    attack: number,
+    defense: number,
     speed: number,
     maxHp: number,
     maxMp: number = 0,
   ) {
     this.name = name;
-    this.attackM = attackM;
-    this.defenseM = defenseM;
-    this.attackP = attackP;
-    this.defenseP = defenseP;
+    this.classe = classe;
+    this.attack = attack;
+    this.defense = defense;
     this.speed = speed;
     this.maxHp = maxHp;
     this.currentHp = maxHp;

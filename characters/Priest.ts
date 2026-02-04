@@ -6,15 +6,16 @@ export class Priest extends Character {
   constructor(name: string) {
     super(
       name,
-      12,  // attackP
-      10,  // defenseP
+      "Priest",
+      16,  // attack - légèrement plus forte que le mage
+      8,   // defense - défense faible
       10,  // speed
       95,  // maxHp
-      50   // maxMp
+      60   // maxMp
     );
   }
 
-  //soin
+  /** Soin */
   healAlly(target: Character): number {
     const healAmount = Math.floor(target.maxHp * 0.25);
     target.currentHp = Math.min(target.currentHp + healAmount, target.maxHp);

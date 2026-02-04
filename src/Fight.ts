@@ -14,7 +14,7 @@ export class Fight {
     }
 
 
-    initiative(character : Character[]) : Character[] {    
-        return character.sort((a, b) => b.speed - a.speed);
+    initiative(allFighters : Character[]) : Character[] {    
+        return allFighters.sort((a, b) => b.speed - a.speed);
     }
 }
