@@ -6,8 +6,9 @@ export class Thief extends Character {
   constructor(name: string) {
     super(
       name,
-      16,  // attackP
-      14,  // defenseP
+      "Thief",
+      16,  // attack - attaque moyenne
+      14,  // defense - défense moyenne
       20,  // speed - le plus rapide du jeu
       100  // maxHp
     );

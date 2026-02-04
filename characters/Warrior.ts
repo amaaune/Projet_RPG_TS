@@ -6,17 +6,18 @@ export class Warrior extends Character {
   constructor(name: string) {
     super(
       name,
-      22,  // attackP
-      20,  // defenseP
-      10,  // speed
+      "Warrior",
+      26,  // attack - attaque élevée
+      20,  // defense - défense élevée
+      11,  // speed - vitesse moyenne
       130  // maxHp
     );
   }
 
   /** Attaque physique simple du guerrier */
   attackPhysical(target: Character): number {
-    const damage = Math.max(this.attackP - target.defenseP, 0);
-    target.takeDamage(damage);
+    const damage = Math.max(this.attack - target.defense, 0);
+    target.currentHp = Math.max(target.currentHp - damage, 0);
     return damage;
   }
 }

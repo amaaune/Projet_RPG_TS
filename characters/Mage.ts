@@ -6,25 +6,27 @@ export class Mage extends Character {
   constructor(name: string) {
     super(
       name,
-      10,  // attackP
-      8,   // defenseP
+      "Mage",
+      13,  // attack - attaque de base faible
+      8,   // defense - défense faible
       12,  // speed
       90,  // maxHp
       60   // maxMp
     );
   }
 
-  /** Attaque magique qui consomme du mana et ignore 1.5x attaque */
+  /** Attaque magique qui consomme du mana et ignore la défense */
   attackMagical(target: Character): number {
-    const manaCost = 15;
+    const manaCost = 10;
     
     if (this.currentMp < manaCost) {
       return 0; // Pas assez de mana
     }
 
     this.currentMp -= manaCost;
-    const damage = Math.floor(this.attackP * 1.5); // 15 dégâts garantis pour 10 attaque
-    target.takeDamage(damage);
+    // Attaque magique puissante qui ignore la défense ennemie
+    const damage = 25; // Dégâts fixes puissants
+    target.currentHp = Math.max(target.currentHp - damage, 0);
     return damage;
   }
 }

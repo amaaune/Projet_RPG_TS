@@ -4,21 +4,21 @@ export class Player extends Character {
     
   inventory: string[];
 
-  constructor(name: string, attackP: number, defenseP: number, attackM: number, defenseM: number, speed: number, maxHp: number) {
-    super(name, attackP, defenseP, attackM, defenseM, speed, maxHp);
+  constructor(name: string, attack: number, defense: number, speed: number, maxHp: number) {
+    super(name, "Player", attack, defense, speed, maxHp);
     this.inventory = [];
   }
 
-  /** Attaque physique */
+  /** Attaque de base */
   attackPhysical(target: Character): number {
-    const damage = Math.max(this.attackP - target.defenseP, 0);
+    const damage = Math.max(this.attack - target.defense, 0);
     target.currentHp = Math.max(target.currentHp - damage, 0);
     return damage;
   }
 
-  /** Attaque magique */
+  /** Attaque magique (ignore la défense) */
   attackMagical(target: Character): number {
-    const damage = Math.max(this.attackM - target.defenseM, 0);
+    const damage = this.attack;
     target.currentHp = Math.max(target.currentHp - damage, 0);
     return damage;
   }

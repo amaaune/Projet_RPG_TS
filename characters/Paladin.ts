@@ -6,19 +6,22 @@ export class Paladin extends Character {
   constructor(name: string) {
     super(
       name,
-      18,  // attackP
-      22,  // defenseP
-      9,   // speed
+      "Paladin",
+      22,  // attack - attaque moins élevée que le guerrier
+      24,  // defense - défense légèrement plus élevée
+      10,  // speed
       120  // maxHp
     );
   }
 
+  /** Attaque sainte : (attaque - défense adverse) * 0.4 sur tous les ennemis */
   holyAttack(targets: Character[]): number {
     let totalDamage = 0;
 
     for (const target of targets) {
-      const damage = Math.max((this.attackP - target.defenseP) * 0.4, 0);
-      target.takeDamage(damage);
+      const baseDamage = Math.max(this.attack - target.defense, 0);
+      const damage = Math.floor(baseDamage * 0.4);
+      target.currentHp = Math.max(target.currentHp - damage, 0);
       totalDamage += damage;
     }
 
