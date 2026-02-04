@@ -12,6 +12,7 @@ export class Barbarian extends Character {
         const damage = Math.max(rawDamage, 0);
 
         target.currentHp = Math.max(target.currentHp - damage, 0);
+        this.currentHp - 20;
         return damage;
     }
 }

@@ -1,6 +1,6 @@
 import { Character } from "../src/Characters.ts";
 
-export class Monster {
+export class Monster extends Character{
 
   random(targets : Character[]) {
     const aliveTarget = targets.filter(t => t.isAlive());

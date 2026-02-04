@@ -1,9 +1,9 @@
 import { Character } from "../src/Characters.ts";
 
 
-export class player extends Character {
+export class Player extends Character {
     
-    inventoru : string[];
+    inventory : string[];
 
   /** Attaque physique */
   attackPhysical(target : Character) : number {
@@ -36,6 +36,6 @@ export class player extends Character {
   }
 
   getInventory() {
-    // check si item existe, slotitems 
+    // check si item existe
   }
 }
