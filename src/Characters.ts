@@ -36,22 +36,4 @@ export class Character {
   isAlive(): boolean {
     return this.currentHp > 0;
   }
-
-  /** Blesse le personnage d'une certaine quantité */
-  takeDamage(damage: number): void {
-    this.currentHp = Math.max(this.currentHp - damage, 0);
-  }
-
-  /** Soigne le personnage d'un pourcentage */
-  heal(percent: number): void {
-    const healAmount = Math.floor(this.maxHp * percent);
-    this.currentHp = Math.min(this.currentHp + healAmount, this.maxHp);
-  }
-
-  /** Ressuscite avec un pourcentage de la vie max */
-  resurrect(percent: number): boolean {
-    if (this.isAlive()) return false;
-    this.currentHp = Math.max(Math.floor(this.maxHp * percent), 1);
-    return true;
-  }
 }
