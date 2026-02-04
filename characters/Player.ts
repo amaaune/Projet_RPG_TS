@@ -3,7 +3,7 @@ import { Character } from "../src/Characters.ts";
 
 export class Player extends Character {
     
-    inventory : string[];
+   // inventory : string[];
 
   /** Attaque physique */
   attackPhysical(target : Character) : number {
