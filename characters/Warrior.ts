@@ -1,15 +1,15 @@
 import { Character } from "../src/Characters.ts";
 
 export class Warrior extends Character {
+  role: string = "tank offensif";
 
-  constructor() {
-    super("Ragnar", 90, 110, 20, 60, 70, 150);
+  constructor(name: string) {
+    super(name, "Warrior", 22, 20, 10, 130);
   }
 
-  shieldBash(target: Character): number {
-    const rawDamage = (this.attackP - target.deffP) * 1.1;
-    const damage = Math.max(rawDamage, 0);
-
+  /** Attaque physique simple */
+  attackPhysical(target: Character): number {
+    const damage = Math.max(this.attack - target.defense, 0);
     target.currentHp = Math.max(target.currentHp - damage, 0);
     return damage;
   }
