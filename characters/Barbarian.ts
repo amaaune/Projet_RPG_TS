@@ -1,17 +1,22 @@
 import { Character } from "../src/Characters.ts";
 
 export class Barbarian extends Character {
-   
-    constructor(
-  ) {
-        super("Bogdan", 120, 80, 0, 80, 90, 120)
-    }
+  role: string = "gros dégâts, fragile";
 
-    berserk(target : Character) : number {
-        const rawDamage = (this.attackP - target.deffP)*1.3;
-        const damage = Math.max(rawDamage, 0);
+  constructor(name: string) {
+    super(name, "Barbarian", 28, 10, 11, 110);
+  }
 
-        target.currentHp = Math.max(target.currentHp - damage, 0);
-        return damage;
-    }
+  
+  berserkAttack(target: Character): number {
+    const baseDamage = Math.max(this.attack - target.defense, 0);
+    const damage = Math.floor(baseDamage * 1.3);
+
+    target.currentHp = Math.max(target.currentHp - damage, 0);
+
+    const recoil = Math.floor(this.maxHp * 0.2);
+    this.currentHp = Math.max(this.currentHp - recoil, 0);
+
+    return damage;
+  }
 }
