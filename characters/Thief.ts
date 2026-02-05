@@ -1,16 +1,20 @@
 import { Character } from "../src/Characters.ts";
 
 export class Thief extends Character {
+  role: string = "rapide, utilitaire";
 
-  constructor() {
-    super("Shade", 60, 40, 20, 30, 120, 90);
+  constructor(name: string) {
+    super(name, "Thief", 16, 14, 20, 100);
   }
 
-  backstab(target: Character): number {
-    const rawDamage = (this.attackP - target.deffP) * 1.6;
-    const damage = Math.max(rawDamage, 0);
+  /** Vol d'objet */
+  steal(): string {
+    const r = Math.random();
 
-    target.currentHp = Math.max(target.currentHp - damage, 0);
-    return damage;
+    if (r < 0.4) return "Rien";
+    if (r < 0.7) return "Potion";
+    if (r < 0.85) return "Fragment d'étoile";
+    if (r < 0.95) return "Éther";
+    return "Demi-étoile";
   }
 }
