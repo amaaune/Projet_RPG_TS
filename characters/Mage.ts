@@ -1,16 +1,25 @@
 import { Character } from "../src/Characters.ts";
 
 export class Mage extends Character {
+  role: string = "damage dealer magique fragile";
 
-  constructor() {
-    super("sorcier", 40, 20, 120, 80, 70, 90);
+  constructor(name: string) {
+    super(name, "Mage", 10, 8, 12, 90, 60);
   }
 
-  fireball(target: Character): number {
-    const rawDamage = (this.attackM - target.deffM) * 1.4;
-    const damage = Math.max(rawDamage, 0);
 
+  magicAttack(target: Character): number {
+    const manaCost = 15;
+
+    if (this.currentMp < manaCost) {
+      return 0;
+    }
+
+    this.currentMp -= manaCost;
+
+    const damage = Math.floor(this.attack * 1.5);
     target.currentHp = Math.max(target.currentHp - damage, 0);
+
     return damage;
   }
 }
