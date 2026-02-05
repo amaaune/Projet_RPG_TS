@@ -1,15 +1,16 @@
 import { Character } from "../src/Characters.ts";
 
 export class Priest extends Character {
-    
-  /** Soigne un pourcentage de la vie max */
-  heal(percent : number) : number {
-    if (!this.isAlive()) return 0;
+  role: string = "healer";
 
-    const healAmount = Math.floor(this.maxHp * percent);
-    const before = this.currentHp;
+  constructor(name: string) {
+    super(name, "Priest", 12, 10, 10, 95, 50);
+  }
 
-    this.currentHp = Math.min(this.currentHp + healAmount, this.maxHp);
-    return this.currentHp - before;
+  
+  healAlly(target: Character): number {
+    const heal = Math.floor(target.maxHp * 0.25);
+    target.currentHp = Math.min(target.currentHp + heal, target.maxHp);
+    return heal;
   }
 }
