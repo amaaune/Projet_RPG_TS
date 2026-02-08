@@ -15,4 +15,4 @@ Le but de ce projet est de réaliser un RPG en ligne de commande en utilisant de
 
 # Execution du projet 
 
-Le lancement affiche une image donc pour devez avoir downloard au prealable les ressources pour le npm-image et ensuite xecuter la commande : deno run --allow-read --allow-net --allow-env main.ts
+Le lancement affiche une image donc pour devez avoir downloard au prealable les ressources pour le npm-image et ensuite xecuter la commande : de tast start
