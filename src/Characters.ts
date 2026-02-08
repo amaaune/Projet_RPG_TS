@@ -1,12 +1,12 @@
 export class Character {
-  name: string;
-  classe: string;
-  attack: number;
-  defense: number;
-  speed: number;
-  maxHp: number;
+  readonly name: string;
+  readonly classe: string;
+  readonly attack: number;    
+  readonly defense: number;
+  readonly speed: number;
+  readonly maxHp: number;
   currentHp: number;
-  maxMp: number;
+  readonly maxMp: number;
   currentMp: number;
 
   constructor(

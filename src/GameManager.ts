@@ -900,36 +900,6 @@ export class GameManager {
         prompt("\n[Appuyez sur Entrée pour continuer]");
     }
 
-    /** Applique un bonus d'équipement à l'équipe */
-    private appliquerBonus(nomTresor: string): Character | null {
-        const membresVivants = this.equipe.filter(p => p.isAlive());
-        if (membresVivants.length === 0) return null;
-
-        const membre = membresVivants[Math.floor(Math.random() * membresVivants.length)];
-
-        if (nomTresor.includes("Épée")) {
-            membre.attack += 5;
-        } else if (nomTresor.includes("Armure")) {
-            membre.defense += 5;
-        } else if (nomTresor.includes("Amulette")) {
-            membre.attack += 5;
-        } else if (nomTresor.includes("Bouclier")) {
-            membre.defense += 5;
-        } else if (nomTresor.includes("Bottes")) {
-            membre.speed += 3;
-        } else if (nomTresor.includes("Potion")) {
-            const heal = Math.floor(membre.maxHp * 0.5);
-            membre.currentHp = Math.min(membre.currentHp + heal, membre.maxHp);
-        } else if (nomTresor.includes("Élixir")) {
-            membre.currentMp = membre.maxMp;
-        } else if (nomTresor.includes("Pierre")) {
-            membre.maxHp += 20;
-            membre.currentHp += 20;
-        }
-        
-        return membre;
-    }
-
     /** Récupère les trésors collectés */
     public getTresors(): string[] {
         return this.tresors;

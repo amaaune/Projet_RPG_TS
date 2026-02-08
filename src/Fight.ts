@@ -1,10 +1,9 @@
 import { Character } from "./Characters.ts";
 
 export class Fight {
-
-    players : Character[];
-    monsters : Character[];
-    allFighters : Character[];
+    private readonly players: Character[];
+    private readonly monsters: Character[];
+    readonly allFighters: Character[];
 
     constructor(players : Character[], monsters : Character[]) {
         this.players = players;
