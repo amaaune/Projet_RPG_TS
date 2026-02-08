@@ -13,21 +13,33 @@ export class Fenrir extends Monster {
         );
     }
 
-    /** Attaque spéciale: Morsure sauvage - peut attaquer 2 fois */
+    /** Attaque spéciale de zone: Morsure sauvage - frappe toute l'équipe */
     morsureSauvage(targets: Character[]): number {
-        const aliveTargets = targets.filter(t => t.isAlive());
-        if (aliveTargets.length === 0) return 0;
-
         let totalDamage = 0;
-        const attackCount = Math.random() > 0.5 ? 2 : 1; // 50% de chance d'attaquer 2 fois
+        targets.forEach(target => {
+            if (target.isAlive()) {
+                const damage = Math.max(this.attack - target.defense, 0);
+                target.currentHp = Math.max(target.currentHp - damage, 0);
+                totalDamage += damage;
+            }
+        });
+        return totalDamage;
+    }
 
-        for (let i = 0; i < attackCount; i++) {
-            const target = aliveTargets[Math.floor(Math.random() * aliveTargets.length)];
+    /** IA du boss: 70% attaque normale (via random), 30% attaque de zone */
+    atkRandom(targets: Character[]): { cible: Character | null, degats: number, attaqueZone: boolean } {
+        const useZoneAttack = Math.random() < 0.3;
+        
+        if (useZoneAttack) {
+            const degats = this.morsureSauvage(targets);
+            return { cible: null, degats, attaqueZone: true };
+        } else {
+            const target = this.random(targets);
+            if (!target) return { cible: null, degats: 0, attaqueZone: false };
+            
             const damage = Math.max(this.attack - target.defense, 0);
             target.currentHp = Math.max(target.currentHp - damage, 0);
-            totalDamage += damage;
+            return { cible: target, degats: damage, attaqueZone: false };
         }
-
-        return totalDamage;
     }
 }

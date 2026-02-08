@@ -16,7 +16,7 @@ interface OptionMenu {
 
 export class Menu {
     private equipe: Character[] = [];
-    private inventaire: string[] = [];
+    private gameManager: GameManager | null = null;
 
     /** 
      * Méthode générique pour afficher un menu avec des options personnalisées
@@ -195,6 +195,9 @@ export class Menu {
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
         
+        // Initialiser le GameManager avec l'équipe créée
+        this.gameManager = new GameManager(this.equipe);
+        
         console.log("\n✓ Équipe complète !");
     }
 
@@ -254,7 +257,7 @@ export class Menu {
                 numero: 0,
                 texte: "Quitter le jeu",
                 action: async () => {
-                    console.log("\n✓ Au revoir ! Merci d'avoir joué.");
+                    console.log("\n✓ Au revoir !");
                 }
             }
         ];
@@ -321,23 +324,13 @@ export class Menu {
             return;
         }
 
-        // Lancer le GameManager avec l'équipe
-        const gameManager = new GameManager(this.equipe);
-        const victoire = await gameManager.lancerExploration();
-
-        // Ajouter une récompense si victoire
-        if (victoire) {
-            const recompenses = [
-                "Épée légendaire",
-                "Armure divine",
-                "Potion ultime",
-                "Anneau de pouvoir",
-                "Trésor ancien"
-            ];
-            const recompense = recompenses[Math.floor(Math.random() * recompenses.length)];
-            this.inventaire.push(recompense);
-            console.log(`\n🎁 Vous avez obtenu : ${recompense}`);
+        // Créer le GameManager si ce n'est pas encore fait
+        if (!this.gameManager) {
+            this.gameManager = new GameManager(this.equipe);
         }
+        
+        // Lancer l'exploration
+        const victoire = await this.gameManager.lancerExploration();
         
         prompt("\nAppuyez sur Entrée pour continuer...");
     }
@@ -349,13 +342,10 @@ export class Menu {
         console.log("║       INVENTAIRE               ║");
         console.log("╚════════════════════════════════╝\n");
         
-        if (this.inventaire.length === 0) {
-            console.log("Votre inventaire est vide.");
+        if (!this.gameManager) {
+            console.log("⚠️  Créez d'abord une équipe pour avoir accès à l'inventaire.");
         } else {
-            console.log(`Vous avez ${this.inventaire.length} objet(s) :\n`);
-            this.inventaire.forEach((objet, index) => {
-                console.log(`${index + 1}. ${objet}`);
-            });
+            this.gameManager.afficherInventaire();
         }
         
         prompt("\nAppuyez sur Entrée pour continuer...");

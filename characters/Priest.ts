@@ -10,8 +10,7 @@ export class Priest extends Character {
       16,  // attack - légèrement plus forte que le mage
       8,   // defense - défense faible
       10,  // speed
-      95,  // maxHp
-      60   // maxMp
+      95   // maxHp - pas de mana pour le Prêtre
     );
   }
 

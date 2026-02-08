@@ -4,6 +4,11 @@ import { Fight } from "./Fight.ts";
 import { Fenrir } from "../monsters/Fenrir.ts";
 import { Meduse } from "../monsters/Meduse.ts";
 import { Anubis } from "../monsters/Anubis.ts";
+import { Goblin } from "../monsters/Goblin.ts";
+import { Orc } from "../monsters/Orc.ts";
+import { Squelette } from "../monsters/Squelette.ts";
+import { Harpie } from "../monsters/Harpie.ts";
+import { Minotaure } from "../monsters/Minotaure.ts";
 
 // Types d'objets utilisables
 type ObjetType = "Potion" | "Morceau d'étoile" | "Demi-étoile" | "Ether";
@@ -28,8 +33,10 @@ export class GameManager {
         this.equipe = equipe;
         // Initialiser les cooldowns à 0
         equipe.forEach(perso => this.cooldowns.set(perso, 0));
-        // Initialiser l'inventaire avec quelques objets de départ
-        this.ajouterObjet("Potion", 3);
+        // Initialiser l'inventaire avec les objets de départ
+        this.ajouterObjet("Potion", 2);
+        this.ajouterObjet("Ether", 1);
+        this.ajouterObjet("Morceau d'étoile", 1);
     }
 
     /** Ajoute un objet à l'inventaire */
@@ -61,7 +68,7 @@ export class GameManager {
         for (this.salleActuelle = 1; this.salleActuelle <= this.NOMBRE_SALLES; this.salleActuelle++) {
             console.clear();
             console.log("╔════════════════════════════════╗");
-            console.log(`║  SALLE ${this.salleActuelle}/${this.NOMBRE_SALLES}                    ║`);
+            console.log(`║  SALLE ${this.salleActuelle}/${this.NOMBRE_SALLES}                     ║`);
             console.log("╚════════════════════════════════╝\n");
 
             // Vérifier si c'est une salle au trésor
@@ -69,8 +76,15 @@ export class GameManager {
                 await this.salleAuTresor();
             } else {
                 // Salle de combat
-                const monstre = this.genererMonstre();
-                console.log(`⚔️  Un ${monstre.name} apparaît !\n`);
+                const monstres = this.genererMonstre();
+                
+                if (monstres.length === 1) {
+                    console.log(`⚔️  Un ${monstres[0].name} apparaît !\n`);
+                } else {
+                    console.log(`⚔️  ${monstres.length} monstres apparaissent !\n`);
+                    monstres.forEach(m => console.log(`   - ${m.name}`));
+                    console.log();
+                }
                 
                 // Demander le mode de combat avec validation
                 let modeAuto = false;
@@ -95,7 +109,7 @@ export class GameManager {
                 }
 
                 // Lancer le combat
-                const victoire = await this.lancerCombat(monstre, modeAuto);
+                const victoire = await this.lancerCombat(monstres, modeAuto);
 
                 if (!victoire) {
                     // Défaite - l'équipe est morte
@@ -121,9 +135,9 @@ export class GameManager {
         return true;
     }
 
-    /** Lance un combat entre l'équipe et un monstre */
-    private async lancerCombat(monstre: Monster, modeAuto: boolean = false): Promise<boolean> {
-        const combat = new Fight(this.equipe, [monstre]);
+    /** Lance un combat entre l'équipe et des monstres */
+    private async lancerCombat(monstres: Monster[], modeAuto: boolean = false): Promise<boolean> {
+        const combat = new Fight(this.equipe, monstres);
         const ordre = combat.initiative(combat.allFighters);
         
         this.tourActuel = 0;
@@ -134,7 +148,7 @@ export class GameManager {
             console.log(`\n╔═══════════════ TOUR ${this.tourActuel} ═══════════════╗\n`);
             
             // Afficher l'état du combat
-            this.afficherEtatCombat(monstre);
+            this.afficherEtatCombatMultiple(monstres);
             await this.pause(1000);
 
             // Chaque combattant attaque selon l'ordre d'initiative
@@ -150,20 +164,20 @@ export class GameManager {
                 if (estJoueur) {
                     if (modeAuto) {
                         // Mode automatique : l'IA choisit
-                        await this.tourJoueurAuto(combattant, monstre);
+                        await this.tourJoueurAutoMultiple(combattant, monstres);
                     } else {
                         // Mode manuel : le joueur choisit
-                        await this.tourJoueur(combattant, monstre);
+                        await this.tourJoueurMultiple(combattant, monstres);
                     }
                 } else {
                     // Le monstre attaque automatiquement
-                    await this.attaqueMonstre(monstre as Monster, this.equipe);
+                    await this.attaqueMonstre(combattant as Monster, this.equipe);
                     await this.pause(1500);
                 }
 
-                // Vérifier les morts après chaque attaque
-                if (!monstre.isAlive()) {
-                    console.log(`\n🎉 Victoire ! ${monstre.name} a été vaincu !\n`);
+                // Vérifier si tous les monstres sont morts
+                if (monstres.every(m => !m.isAlive())) {
+                    console.log(`\n🎉 Victoire ! Tous les monstres ont été vaincus !\n`);
                     await this.pause(2000);
                     return true;
                 }
@@ -303,7 +317,7 @@ export class GameManager {
     }
 
     /** Attaque de base */
-    private async attaqueDeBase(joueur: Character, monstre: Monster): Promise<void> {
+    private attaqueDeBase(joueur: Character, monstre: Monster): void {
         let degats = 0;
         
         // Vérifier si le personnage a une méthode attackPhysical spécifique
@@ -449,7 +463,7 @@ export class GameManager {
     }
 
     /** Gère l'attaque d'un monstre */
-    private async attaqueMonstre(monstre: Monster, equipe: Character[]): Promise<void> {
+    private attaqueMonstre(monstre: Monster, equipe: Character[]): void {
         const cible = monstre.random(equipe);
         
         if (!cible) {
@@ -771,18 +785,28 @@ export class GameManager {
     }
 
     /** Génère un monstre spécifique basé sur la salle */
-    private genererMonstre(): Monster {
-        // Seulement 3 boss pour les salles 1, 3 et 5
-        switch (this.salleActuelle) {
-            case 1:
-                return new Fenrir(); // Boss 1: Loup rapide et agressif
-            case 3:
-                return new Meduse(); // Boss 2: Reine Gorgone magique
-            case 5:
-                return new Anubis(); // Boss 3 Final: Gardien des Ombres
-            default:
-                return new Fenrir();
+    private genererMonstre(): Monster[] {
+        // Salles 1 et 3: 3 monstres normaux aléatoires
+        if (this.salleActuelle === 1 || this.salleActuelle === 3) {
+            const monstresNormaux = [Goblin, Orc, Squelette, Harpie, Minotaure];
+            const monstres: Monster[] = [];
+            
+            for (let i = 0; i < 3; i++) {
+                const randomIndex = Math.floor(Math.random() * monstresNormaux.length);
+                monstres.push(new monstresNormaux[randomIndex]());
+            }
+            
+            return monstres;
         }
+        
+        // Salle 5: Boss aléatoire
+        if (this.salleActuelle === 5) {
+            const boss = [Fenrir, Meduse, Anubis];
+            const randomIndex = Math.floor(Math.random() * boss.length);
+            return [new boss[randomIndex]()];
+        }
+        
+        return [new Goblin()];
     }
 
     /** Gère une salle au trésor */
@@ -839,22 +863,8 @@ export class GameManager {
                     console.log(`   ☠️  ${ouvreur.name} est K.O. !`);
                 }
             } else {
-                // TRÉSOR - Uniquement des objets consommables
+                // TRÉSOR - 2 objets consommables
                 const objetsDisponibles: ObjetType[] = ["Potion", "Morceau d'étoile", "Demi-étoile", "Ether"];
-                const randomIndex = Math.floor(Math.random() * objetsDisponibles.length);
-                let typeObjet = objetsDisponibles[randomIndex];
-                
-                // Demi-étoile est très rare (5% de chance)
-                if (typeObjet === "Demi-étoile" && Math.random() > 0.05) {
-                    typeObjet = "Morceau d'étoile"; // Remplacer par fragment
-                }
-                
-                // Quantité : Potion/Ether (1-3), Étoiles (1)
-                const quantite = (typeObjet === "Potion" || typeObjet === "Ether") ? 
-                    Math.floor(Math.random() * 3) + 1 : 1;
-                
-                this.ajouterObjet(typeObjet, quantite);
-                
                 const icones: Record<ObjetType, string> = {
                     "Potion": "🧪",
                     "Morceau d'étoile": "✨",
@@ -862,7 +872,25 @@ export class GameManager {
                     "Ether": "💊"
                 };
                 
-                console.log(`   ✓ ${icones[typeObjet]} ${typeObjet} x${quantite}`);
+                console.log(`   ✓ Vous trouvez 2 objets :`);
+                
+                // Loot de 2 objets
+                for (let j = 0; j < 2; j++) {
+                    const randomIndex = Math.floor(Math.random() * objetsDisponibles.length);
+                    let typeObjet = objetsDisponibles[randomIndex];
+                    
+                    // Demi-étoile est très rare (5% de chance)
+                    if (typeObjet === "Demi-étoile" && Math.random() > 0.05) {
+                        typeObjet = "Morceau d'étoile"; // Remplacer par fragment
+                    }
+                    
+                    // Quantité : Potion/Ether (1-3), Étoiles (1)
+                    const quantite = (typeObjet === "Potion" || typeObjet === "Ether") ? 
+                        Math.floor(Math.random() * 3) + 1 : 1;
+                    
+                    this.ajouterObjet(typeObjet, quantite);
+                    console.log(`     ${icones[typeObjet]} ${typeObjet} x${quantite}`);
+                }
             }
             
             await this.pause(800);
@@ -930,7 +958,7 @@ export class GameManager {
     private afficherVictoireFinale(): void {
         console.clear();
         console.log("\n╔════════════════════════════════╗");
-        console.log("║    🏆 VICTOIRE FINALE ! 🏆    ║");
+        console.log("║    🏆 VICTOIRE FINALE ! 🏆     ║");
         console.log("╚════════════════════════════════╝\n");
         console.log("Félicitations ! Vous avez traversé tout le donjon !");
         console.log(`Votre équipe a survécu aux ${this.NOMBRE_SALLES} salles !\n`);
@@ -959,4 +987,214 @@ export class GameManager {
     public getNombreSalles(): number {
         return this.NOMBRE_SALLES;
     }
+
+    /** Affiche l'inventaire avec les quantités */
+    public afficherInventaire(): void {
+        if (this.inventaire.length === 0) {
+            console.log("📦 Votre inventaire est vide.");
+        } else {
+            console.log("📦 Votre inventaire :\n");
+            this.inventaire.forEach((objet) => {
+                console.log(`   ${objet.icone} ${objet.nom} x${objet.quantite}`);
+            });
+        }
+    }
+
+    // ===== MÉTHODES POUR COMBATS MULTIPLES =====
+
+    /** Affiche l'état du combat avec plusieurs monstres */
+    private afficherEtatCombatMultiple(monstres: Monster[]): void {
+        const largeur = 50;
+        const ligne = "─".repeat(largeur - 2);
+        
+        // Afficher les monstres
+        console.log("\n┌" + ligne + "┐");
+        const titreMonstres = monstres.length > 1 ? `👹 MONSTRES (${monstres.filter(m => m.isAlive()).length}/${monstres.length})` : `👹 ${monstres[0].name}`;
+        const espacesTitre = " ".repeat(Math.max(0, largeur - 2 - titreMonstres.length));
+        console.log(`│${titreMonstres}${espacesTitre}│`);
+        console.log("├" + ligne + "┤");
+        
+        monstres.forEach((monstre, index) => {
+            const statut = monstre.isAlive() ? "✓" : "✗";
+            const ligneMonst = `${statut} ${index + 1}. ${monstre.name.padEnd(20)} HP:${monstre.currentHp.toString().padStart(3)}/${monstre.maxHp.toString().padEnd(3)}`;
+            const espaces = " ".repeat(Math.max(0, largeur - 2 - ligneMonst.length));
+            console.log(`│${ligneMonst}${espaces}│`);
+        });
+        console.log("└" + ligne + "┘");
+        
+        // Afficher l'équipe
+        console.log("\n┌" + ligne + "┐");
+        const titreEquipe = "👥 VOTRE ÉQUIPE";
+        const espacesTitreEq = " ".repeat(Math.max(0, largeur - 2 - titreEquipe.length));
+        console.log(`│${titreEquipe}${espacesTitreEq}│`);
+        console.log("├" + ligne + "┤");
+        
+        this.equipe.forEach((joueur, index) => {
+            const statut = joueur.isAlive() ? "✓" : "✗";
+            const cooldown = this.cooldowns.get(joueur) || 0;
+            const cdText = cooldown > 0 ? `CD:${cooldown}` : "OK ";
+            
+            const ligneJoueur = `${statut} ${index + 1}. ${joueur.name.padEnd(12)} HP:${joueur.currentHp.toString().padStart(3)}/${joueur.maxHp.toString().padEnd(3)} [${cdText}]`;
+            const espaces = " ".repeat(Math.max(0, largeur - 2 - ligneJoueur.length));
+            console.log(`│${ligneJoueur}${espaces}│`);
+        });
+        
+        console.log("└" + ligne + "┘");
+    }
+
+    /** Tour automatique avec plusieurs monstres */
+    private async tourJoueurAutoMultiple(joueur: Character, monstres: Monster[]): Promise<void> {
+        console.log(`\n━━━ Tour de ${joueur.name} (AUTO) ━━━`);
+        
+        const cooldown = this.cooldowns.get(joueur) || 0;
+        
+        // Logique de décision de l'IA
+        let action: number;
+        
+        // Vérifier si un allié est en danger critique (< 30% HP) et qu'on a une potion
+        const allieCritique = this.equipe.find(p => p.isAlive() && (p.currentHp / p.maxHp) < 0.3);
+        const aPotion = this.inventaire.find(obj => obj.nom === "Potion" && obj.quantite > 0);
+        
+        if (allieCritique && aPotion) {
+            console.log(`${joueur.name} utilise une Potion sur ${allieCritique.name}`);
+            const resultat = this.utiliserObjet("Potion", allieCritique);
+            console.log(`   ${resultat}`);
+            aPotion.quantite--;
+            if (aPotion.quantite <= 0) {
+                this.inventaire = this.inventaire.filter(obj => obj !== aPotion);
+            }
+            return;
+        }
+        
+        // Si Priest et un allié est blessé (< 50% HP), soigner
+        if (joueur.classe === "Priest") {
+            const allieBlessé = this.equipe.find(p => p.isAlive() && (p.currentHp / p.maxHp) < 0.5);
+            if (allieBlessé && cooldown === 0) {
+                action = 3;
+            } else {
+                action = 1;
+            }
+        } else if (joueur.classe === "Mage") {
+            if (joueur.currentMp >= 10 && cooldown === 0 && Math.random() < 0.5) {
+                action = 3;
+            } else {
+                action = 1;
+            }
+        } else {
+            if (cooldown === 0 && Math.random() < 0.3) {
+                action = 3;
+            } else {
+                action = 1;
+            }
+        }
+        
+        await this.pause(500);
+        
+        // Choisir un monstre aléatoire vivant
+        const monstresVivants = monstres.filter(m => m.isAlive());
+        const cible = monstresVivants[Math.floor(Math.random() * monstresVivants.length)];
+        
+        switch (action) {
+            case 1:
+                console.log(`${joueur.name} utilise Attaque de Base`);
+                await this.attaqueDeBase(joueur, cible);
+                break;
+            case 3:
+                if (cooldown > 0) {
+                    console.log(`${joueur.name} utilise Attaque de Base (cooldown)`);
+                    await this.attaqueDeBase(joueur, cible);
+                } else {
+                    console.log(`${joueur.name} utilise Compétence Spéciale`);
+                    await this.competenceSpeciale(joueur, cible);
+                    this.cooldowns.set(joueur, 2);
+                }
+                break;
+        }
+        
+        if (cooldown > 0) {
+            this.cooldowns.set(joueur, cooldown - 1);
+        }
+    }
+
+    /** Tour manuel avec plusieurs monstres */
+    private async tourJoueurMultiple(joueur: Character, monstres: Monster[]): Promise<void> {
+        console.log(`\n━━━ Tour de ${joueur.name} ━━━`);
+        
+        const cooldown = this.cooldowns.get(joueur) || 0;
+        
+        console.log("\nActions disponibles :");
+        console.log("1. Attaque de Base");
+        
+        if (cooldown > 0) {
+            console.log(`2. Compétence Spéciale (Cooldown: ${cooldown} tours)`);
+        } else {
+            console.log("2. Compétence Spéciale (Prête !)");
+        }
+        
+        console.log("3. Utiliser un objet de l'inventaire");
+        
+        const choix = prompt(`\nChoisissez une action (1-3) : `);
+        
+        switch (choix) {
+            case "1":
+                // Choisir la cible
+                const cibleAtk = await this.choisirCible(monstres);
+                if (cibleAtk) {
+                    await this.attaqueDeBase(joueur, cibleAtk);
+                }
+                break;
+            case "2":
+                if (cooldown > 0) {
+                    console.log(`\n⏳ Compétence en cooldown ! Attaque de base à la place.`);
+                    const cibleCd = await this.choisirCible(monstres);
+                    if (cibleCd) {
+                        await this.attaqueDeBase(joueur, cibleCd);
+                    }
+                } else {
+                    const cibleComp = await this.choisirCible(monstres);
+                    if (cibleComp) {
+                        await this.competenceSpeciale(joueur, cibleComp);
+                        this.cooldowns.set(joueur, 2);
+                    }
+                }
+                break;
+            case "3":
+                await this.utiliserObjetCombat();
+                break;
+            default:
+                console.log("\n❌ Choix invalide. Attaque de base par défaut.");
+                const cibleDef = await this.choisirCible(monstres);
+                if (cibleDef) {
+                    await this.attaqueDeBase(joueur, cibleDef);
+                }
+        }
+        
+        if (cooldown > 0) {
+            this.cooldowns.set(joueur, cooldown - 1);
+        }
+    }
+
+    /** Permet au joueur de choisir une cible parmi les monstres vivants */
+    private choisirCible(monstres: Monster[]): Monster | null {
+        const monstresVivants = monstres.filter(m => m.isAlive());
+        
+        if (monstresVivants.length === 0) return null;
+        if (monstresVivants.length === 1) return monstresVivants[0];
+        
+        console.log("\nChoisissez une cible :");
+        monstresVivants.forEach((m, index) => {
+            console.log(`${index + 1}. ${m.name} (HP: ${m.currentHp}/${m.maxHp})`);
+        });
+        
+        const choix = prompt(`\nCible (1-${monstresVivants.length}) : `);
+        const index = parseInt(choix || "1") - 1;
+        
+        if (index >= 0 && index < monstresVivants.length) {
+            return monstresVivants[index];
+        }
+        
+        console.log("Cible invalide, attaque le premier monstre.");
+        return monstresVivants[0];
+    }
 }
+
