@@ -20,21 +20,23 @@ Projet_RPG_TS/
 │   ├── Paladin.ts           # Paladin - tank/support
 │   ├── Mage.ts              # Magicien - dégâts magiques
 │   ├── Priest.ts            # Prêtre - guérison
-│   └── Thief.ts             # Voleur - rapidité et utilité
+│   ├── Thief.ts             # Voleur - rapidité et utilité
+│   └── Player.ts            # Classe du joueur
 ├── monsters/                # Classes de monstres et boss
 │   ├── Monsters.ts          # Classe de base des monstres
 │   ├── Fenrir.ts            # Boss Nordique
 │   ├── Meduse.ts            # Boss Grec
 │   ├── Anubis.ts            # Boss Égyptien
-│   └── [autres_monstres]    # Ennemis normaux
+│   ├── Goblin.ts            # Monstre gobelin
+│   ├── Harpie.ts            # Monstre harpie
+│   ├── Minotaure.ts         # Monstre minotaure
+│   ├── Orc.ts               # Monstre orc
+│   └── Squelette.ts         # Monstre squelette
 └── src/                     # Système de jeu
-    ├── Application.ts       # Classe principale
     ├── Characters.ts        # Classe de base Character
     ├── Menu.ts              # Interface menu
     ├── Fight.ts             # Système de combat
-    ├── GameManager.ts       # Gestion de la progression
-    └── interfaces/
-        └── IInterfaces.ts   # Interfaces du projet
+    └── GameManager.ts       # Gestion de la progression
 ```
 
 ## Comment Jouer
@@ -49,13 +51,48 @@ Le combat fonctionne au tour par tour. À chaque tour, vous pouvez :
 - Attaquer l'ennemi
 - Utiliser une capacité spéciale (si disponible)
 - Utiliser un objet (potions, etc.)
-- Vous défendre
 
 La vitesse détermine qui agit en premier. L'Attaque et la Défense sont les stats principales du combat. Les Points de Vie (HP) représentent votre santé. Lorsque vos HP atteignent 0, vous êtes éliminé.
 
 ### Progression
 
-Vous affronterez des ennemis de plus en plus difficiles. Progressivement, vous découvrirez et combattrez les trois boss majeurs incarnant chacun une mythologie différente. Battez-les tous les trois pour remporter la victoire et devenir le véritable Tueur de Dieux.
+Combattez des monstres de plus en plus coriaces et progressez dans le jeu. À chaque victoire, gagnez des récompenses qui renforceront votre équipe. Continuez à avancer pour affronter les défis les plus redoutables et les boss les plus puissants du donjon.
+
+## Installation et Lancement
+
+### Prérequis
+
+Avant de lancer le jeu, assurez-vous que vous avez installé :
+- **Deno** (version récente) - https://deno.land
+
+### Installation en Local
+
+1. Clonez ou téléchargez le projet depuis le repository
+2. Naviguez dans le dossier du projet :
+```bash
+cd Projet_RPG_TS
+```
+
+3. Installez les dépendances (optionnel, Deno les télécharge automatiquement) :
+```bash
+deno cache main.ts
+```
+
+### Lancer le Jeu
+
+Pour démarrer le jeu, exécutez la commande suivante dans le dossier du projet :
+
+```bash
+deno task start
+```
+
+Ou directement avec :
+
+```bash
+deno run --allow-read main.ts
+```
+
+Le jeu affichera son titre et vous guidera à travers l'aventure mythologique. Bienvenue dans DEICIDE, Tueur de Dieux !
 
 ## Les Personnages Jouables
 
@@ -152,4 +189,4 @@ Ce projet RPG illustre les grands principes de la programmation orientée objet 
 - **Abstraction :** Les interfaces définissent les contrats entre les classes
 - **Encapsulation :** Les stats sont protégées et modifiées uniquement par des méthodes contrôlées
 
-Le projet est développé en TypeScript.
+Le projet est développé en TypeScript, garantissant la sécurité des types et la maintenabilité du code.
