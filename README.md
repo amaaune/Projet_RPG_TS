@@ -89,7 +89,7 @@ deno task start
 Ou directement avec :
 
 ```bash
-deno run --allow-read main.ts
+deno run --allow-read --allow-net --allow-env main.ts
 ```
 
 Le jeu affichera son titre et vous guidera à travers l'aventure mythologique. Bienvenue dans DEICIDE, Tueur de Dieux !
